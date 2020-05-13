@@ -1,0 +1,9 @@
+name: 'ShardPlugin'
+main: 'braayy.shard.ShardPlugin'
+version: '1.0'
+author: Braayy
+
+commands:
+  shard:
+    aliases: [ 'shards' ]
+    description: 'Manage your shards!'

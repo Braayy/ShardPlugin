@@ -1,0 +1,72 @@
+storage-filename: 'storage.db'
+
+ways-to-earn:
+  playing:
+    enabled: true
+    chance: 20
+    amount: 10
+    timer: 1
+  mining:
+    enabled: true
+    chance: 30
+    amount: 10
+    types: [ 'stone' ]
+  killing_mobs:
+    enabled: true
+    chance: 10
+    amount: 10
+    types: [ 'zombie' ]
+  harvesting_crops:
+    enabled: true
+    chance: 30
+    amount: 10
+    types: [ 'crops', 'pumpkin_stem' ]
+  fishing:
+    enabled: true
+    chance: 30
+    amount: 10
+
+shard-shop:
+  title: '&a&lShard Shop'
+  size: 27
+  filler:
+    type: 'stained glass pane'
+    glow: true
+    display-name: '&f '
+  items:
+    Money:
+      type: 'paper'
+      glow: false
+      price: 10
+      slot: 11
+      display-name: '&a&l$100,000'
+      lore:
+        - ''
+        - '&a&l∙ &a&lCOST &f10 Shards'
+        - ''
+      commands:
+        - 'eco give %player% 100000'
+    Experience:
+      type: 'exp bottle'
+      glow: false
+      display-name: '&a&l5,000 Exp'
+      price: 4
+      slot: 13
+      lore:
+        - ''
+        - '&a&l∙ &a&lCOST &f4 Shards'
+        - ''
+      commands:
+        - 'exp give %player% 5000'
+    EmeraldBlocks:
+      type: 'emerald block'
+      glow: false
+      display-name: '&a&lEmerald Blocks &8(&ax64&8)'
+      price: 1
+      slot: 15
+      lore:
+        - ''
+        - '&a&l∙ &a&lCOST &f1 Shard'
+        - ''
+      commands:
+        - 'give %player% emerald_block 64'

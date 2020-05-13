@@ -2,6 +2,7 @@ name: 'ShardPlugin'
 main: 'braayy.shard.ShardPlugin'
 version: '1.0'
 author: Braayy
+api-version: '1.8'
 
 commands:
   shard:

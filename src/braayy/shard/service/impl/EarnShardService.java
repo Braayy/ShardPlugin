@@ -47,6 +47,7 @@ public class EarnShardService implements Service, Listener {
             this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
                 AFKService afkService = this.plugin.getService(AFKService.class);
                 ShardService shardService = this.plugin.getService(ShardService.class);
+                MessageService messageService = this.plugin.getService(MessageService.class);
 
                 for (Player player : this.plugin.getServer().getOnlinePlayers()) {
                     if (!afkService.isAFK(player)) {
@@ -54,7 +55,7 @@ public class EarnShardService implements Service, Listener {
                         if (chance <= this.playing.getChance()) {
                             shardService.addShards(player, this.playing.getAmount());
 
-                            player.sendMessage(ChatColor.GREEN + "You have earned " + this.playing.getAmount() + " shards for playing");
+                            messageService.sendMessage(player, "earn.playing", "amount", this.playing.getAmount());
                         }
                     }
                 }
@@ -69,23 +70,24 @@ public class EarnShardService implements Service, Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (!this.mining.isEnabled() && !this.harvestingCrops.isEnabled()) return;
 
+        ShardService shardService = this.plugin.getService(ShardService.class);
+        MessageService messageService = this.plugin.getService(MessageService.class);
+
         if (this.mining.isAllowed(event.getBlock().getType())) {
             float chance = ThreadLocalRandom.current().nextFloat();
             if (chance <= this.mining.getChance()) {
-                ShardService shardService = this.plugin.getService(ShardService.class);
-
                 shardService.addShards(event.getPlayer(), this.mining.getAmount());
-                event.getPlayer().sendMessage(ChatColor.GREEN + "You have earned " + this.mining.getAmount() + " shards for mining");
+
+                messageService.sendMessage(event.getPlayer(), "earn.mining", "amount", this.mining.getAmount());
             }
         }
 
         if (this.harvestingCrops.isAllowed(event.getBlock().getType())) {
             float chance = ThreadLocalRandom.current().nextFloat();
             if (chance <= this.harvestingCrops.getChance()) {
-                ShardService shardService = this.plugin.getService(ShardService.class);
-
                 shardService.addShards(event.getPlayer(), this.harvestingCrops.getAmount());
-                event.getPlayer().sendMessage(ChatColor.GREEN + "You have earned " + this.mining.getAmount() + " shards for harvesting crops");
+
+                messageService.sendMessage(event.getPlayer(), "earn.harvesting", "amount", this.harvestingCrops.getAmount());
             }
         }
     }
@@ -97,14 +99,16 @@ public class EarnShardService implements Service, Listener {
         if (!this.killingMobs.isEnabled()) return;
         if (!this.killingMobs.isAllowed(event.getEntityType())) return;
 
+        ShardService shardService = this.plugin.getService(ShardService.class);
+        MessageService messageService = this.plugin.getService(MessageService.class);
+
         float chance = ThreadLocalRandom.current().nextFloat();
-        if (chance <= this.mining.getChance()) {
+        if (chance <= this.killingMobs.getChance()) {
             Player killer = event.getEntity().getKiller();
 
-            ShardService shardService = this.plugin.getService(ShardService.class);
+            shardService.addShards(killer, this.killingMobs.getAmount());
 
-            shardService.addShards(killer, this.mining.getAmount());
-            killer.sendMessage(ChatColor.GREEN + "You have earned " + this.mining.getAmount() + " shards for killing a mob");
+            messageService.sendMessage(killer, "earn.killing", "amount", this.killingMobs.getAmount());
         }
     }
 
@@ -112,12 +116,14 @@ public class EarnShardService implements Service, Listener {
     public void onPlayerFish(PlayerFishEvent event) {
         if (!this.fishing.isEnabled()) return;
 
+        ShardService shardService = this.plugin.getService(ShardService.class);
+        MessageService messageService = this.plugin.getService(MessageService.class);
+
         float chance = ThreadLocalRandom.current().nextFloat();
         if (chance <= this.fishing.getChance()) {
-            ShardService shardService = this.plugin.getService(ShardService.class);
+            shardService.addShards(event.getPlayer(), this.fishing.getAmount());
 
-            shardService.addShards(event.getPlayer(), this.mining.getAmount());
-            event.getPlayer().sendMessage(ChatColor.GREEN + "You have earned " + this.mining.getAmount() + " shards for fishing");
+            messageService.sendMessage(event.getPlayer(), "earn.fishing", "amount", this.fishing.getAmount());
         }
     }
 }

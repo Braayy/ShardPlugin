@@ -76,18 +76,19 @@ public class ShardShopInventoryService implements Service, Listener {
             Player player = (Player) event.getWhoClicked();
 
             ShardService shardService = this.plugin.getService(ShardService.class);
+            MessageService messageService = this.plugin.getService(MessageService.class);
 
             for (ShardShopItem item : this.items) {
                 if (event.getCurrentItem().isSimilar(item.getIcon())) {
                     if (!shardService.hasShards(player, item.getPrice())) {
-                        player.sendMessage(ChatColor.RED + "You don't have enough shards to buy this item");
+                        messageService.sendMessage(player, "shop.not-enough");
                         player.closeInventory();
 
                         return;
                     }
 
                     shardService.removeShards(player, item.getPrice());
-                    player.sendMessage(ChatColor.GREEN + "You have bought a item");
+                    messageService.sendMessage(player, "shop.bought");
 
                     for (String command : item.getCommands()) {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));

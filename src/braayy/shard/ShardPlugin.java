@@ -2,6 +2,7 @@ package braayy.shard;
 
 import braayy.shard.dao.Dao;
 import braayy.shard.dao.impl.ShardPlayerDao;
+import braayy.shard.enchantment.GlowEnchantment;
 import braayy.shard.model.ShardPlayer;
 import braayy.shard.service.Service;
 import braayy.shard.service.impl.*;
@@ -24,6 +25,8 @@ public class ShardPlugin extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
+        GlowEnchantment.register();
+
         this.serviceSet = new HashSet<>();
 
         registerServices(
@@ -31,7 +34,8 @@ public class ShardPlugin extends JavaPlugin {
                 DatabaseService.class,
                 ShardService.class,
                 EarnShardService.class,
-                ShardShopInventoryService.class
+                ShardShopInventoryService.class,
+                MessageService.class
         );
 
         this.shardPlayerDao = new ShardPlayerDao(this);

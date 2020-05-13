@@ -5,6 +5,7 @@ ways-to-earn:
     enabled: true
     chance: 20
     amount: 10
+    # Time in minutes
     timer: 1
   mining:
     enabled: true

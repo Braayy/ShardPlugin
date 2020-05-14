@@ -22,23 +22,28 @@ public class ShardShopInventoryService implements Service, Listener {
 
     private final ShardPlugin plugin;
 
-    private final String title;
-    private final int size;
-    private final ItemStack filler;
-    private final List<ShardShopItem> items;
+    private String title;
+    private int size;
+    private ItemStack filler;
+    private List<ShardShopItem> items;
 
     public ShardShopInventoryService(ShardPlugin plugin) {
         this.plugin = plugin;
-
-        this.title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("shard-shop.title"));
-        this.size = plugin.getConfig().getInt("shard-shop.size");
-        this.filler = Util.deserializeItem(plugin.getConfig().getConfigurationSection("shard-shop.filler"));
-
-        this.items = new ArrayList<>();
     }
 
     @Override
     public void enable() {
+        this.title = ChatColor.translateAlternateColorCodes('&', this.plugin.getConfig().getString("shard-shop.title"));
+        this.size = this.plugin.getConfig().getInt("shard-shop.size");
+        this.filler = Util.deserializeItem(this.plugin.getConfig().getConfigurationSection("shard-shop.filler"));
+
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        } else {
+            this.items.clear();
+        }
+
+
         ConfigurationSection items = this.plugin.getConfig().getConfigurationSection("shard-shop.items");
         for (String key : items.getKeys(false)) {
             ShardShopItem item = new ShardShopItem(items.getConfigurationSection(key));

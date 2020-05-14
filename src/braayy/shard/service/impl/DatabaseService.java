@@ -24,6 +24,10 @@ public class DatabaseService implements Service {
         String databaseFilename = this.plugin.getConfig().getString("storage-filename", "storage.db");
 
         try {
+            if (this.connection != null) {
+                this.connection.close();
+            }
+
             File storageFile = new File(this.plugin.getDataFolder(), databaseFilename);
             if (!storageFile.exists()) {
                 if (!storageFile.createNewFile()) {

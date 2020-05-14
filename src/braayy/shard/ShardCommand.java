@@ -1,19 +1,20 @@
 package braayy.shard;
 
 import braayy.shard.inventory.ShardShopInventoryHolder;
-import braayy.shard.service.impl.MessageService;
-import braayy.shard.service.impl.ShardService;
-import braayy.shard.service.impl.ShardShopInventoryService;
+import braayy.shard.service.impl.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class ShardCommand implements CommandExecutor {
+public class ShardCommand implements CommandExecutor, TabCompleter {
 
     private final ShardPlugin plugin;
 
@@ -86,6 +87,25 @@ public class ShardCommand implements CommandExecutor {
             }
 
             handleSet(sender, label, Arrays.copyOfRange(args, 1, args.length));
+        } else if (args[0].equalsIgnoreCase("reload")) {
+            if (!sender.hasPermission("shard.admin")) {
+                messageService.sendMessage(sender, "command.no-permission");
+
+                return true;
+            }
+
+            EarnShardService earnShardService = this.plugin.getService(EarnShardService.class);
+            DatabaseService databaseService = this.plugin.getService(DatabaseService.class);
+            ShardShopInventoryService shardShopInventoryService = this.plugin.getService(ShardShopInventoryService.class);
+
+            this.plugin.reloadConfig();
+
+            earnShardService.enable();
+            databaseService.enable();
+            shardShopInventoryService.enable();
+            messageService.reload();
+
+            messageService.sendMessage(sender, "command.reload");
         } else {
             handleHelp(sender, label, command.getDescription());
         }
@@ -93,8 +113,35 @@ public class ShardCommand implements CommandExecutor {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1) {
+            List<String> tab = new ArrayList<>();
+
+            if ("balance".startsWith(args[0]) && sender.hasPermission("shard.balance")) {
+                tab.add("balance");
+            } else if ("pay".startsWith(args[0]) && sender.hasPermission("shard.pay")) {
+                tab.add("pay");
+            } else if ("shop".startsWith(args[0]) && sender.hasPermission("shard.shop")) {
+                tab.add("shop");
+            } else if ("shop".startsWith(args[0]) && sender.hasPermission("shard.shop")) {
+                tab.add("shop");
+            } else if (sender.hasPermission("shard.admin")) {
+                if ("take".startsWith(args[0])) tab.add("take");
+                else if ("give".startsWith(args[0])) tab.add("give");
+                else if ("set".startsWith(args[0])) tab.add("set");
+                else if ("reload".startsWith(args[0])) tab.add("reload");
+            }
+
+            return tab.size() == 0 ? null : tab;
+        }
+
+        return null;
+    }
+
     public void register() {
         this.plugin.getCommand("shard").setExecutor(this);
+        this.plugin.getCommand("shard").setTabCompleter(this);
     }
 
     private void handleHelp(CommandSender sender, String label, String description) {

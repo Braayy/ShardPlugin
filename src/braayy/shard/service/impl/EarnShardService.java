@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -23,28 +24,33 @@ public class EarnShardService implements Service, Listener {
 
     private final ShardPlugin plugin;
 
-    private final Playing playing;
-    private final Mining mining;
-    private final KillingMobs killingMobs;
-    private final HarvestingCrops harvestingCrops;
-    private final WayToEarn fishing;
+    private Playing playing;
+    private Mining mining;
+    private KillingMobs killingMobs;
+    private HarvestingCrops harvestingCrops;
+    private WayToEarn fishing;
+    private BukkitTask playingTask;
 
     public EarnShardService(ShardPlugin plugin) {
         this.plugin = plugin;
+    }
 
+    @Override
+    public void enable() {
         this.playing = new Playing(plugin);
         this.mining = new Mining(plugin);
         this.killingMobs = new KillingMobs(plugin);
         this.harvestingCrops = new HarvestingCrops(plugin);
         this.fishing = new WayToEarn(plugin, "fishing");
-    }
 
-    @Override
-    public void enable() {
+        if (this.playingTask != null) {
+            this.playingTask.cancel();
+        }
+
         if (this.playing.isEnabled()) {
             int timer = 20 * 60 * this.playing.getTimer();
 
-            this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
+            this.playingTask = this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
                 AFKService afkService = this.plugin.getService(AFKService.class);
                 ShardService shardService = this.plugin.getService(ShardService.class);
                 MessageService messageService = this.plugin.getService(MessageService.class);
